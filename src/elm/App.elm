@@ -13,16 +13,26 @@ init : Model
 init = 0
 
 
-type Action = NoOp | Increment | Decrement
+type Button =
+  Up
+  | Down
+  | Select
+
+
+type Action =
+  NoOp
+  | Click Button
 
 
 update : Action -> Model -> Model
 update action model =
   case action of
-    Increment ->
+    Click Up ->
       model + 1
-    Decrement ->
+    Click Down ->
       model - 1
+    Click Select ->
+      0
     NoOp ->
       model
 
@@ -34,23 +44,28 @@ view model =
   }
 
 
-port clicks : Signal String
+port clicks : Signal (Maybe String)
 
 
-parseClick : String -> Action
-parseClick click =
+parseButton : String -> Maybe Button
+parseButton click =
   case click of
     "up" ->
-      Increment
+      Just Up
     "down" ->
-      Decrement
+      Just Down
+    "select" ->
+      Just Select
     _ ->
-      NoOp
+      Nothing
 
 
 actions : Signal Action
 actions =
-  Signal.map parseClick clicks
+  clicks
+  |> Signal.map (\x -> Maybe.andThen x parseButton)
+  |> Signal.map (Maybe.map Click)
+  |> Signal.filterMap identity NoOp
 
 
 model : Signal Model
