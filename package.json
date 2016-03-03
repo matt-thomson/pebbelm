@@ -1,0 +1,16 @@
+{
+  "name": "pebbelm",
+  "version": "1.0.0",
+  "description": "Proof-of-concept Elm app for Pebble smartwatches",
+  "main": "src/js/index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "Matt Thomson",
+  "license": "MIT",
+  "dependencies": {
+    "elm": "^0.16.0",
+    "elm-webpack-loader": "^2.0.0",
+    "webpack": "^1.12.14"
+  }
+}
