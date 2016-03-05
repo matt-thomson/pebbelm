@@ -6,11 +6,15 @@ type alias Card =
   }
 
 
-type alias Model = Int
+type alias Model =
+  { counter: Int
+  }
 
 
 init : Model
-init = 0
+init =
+  { counter = 0
+  }
 
 
 type Button =
@@ -28,19 +32,19 @@ update : Action -> Model -> Model
 update action model =
   case action of
     Click Up ->
-      model + 1
+      { model | counter = model.counter + 1 }
     Click Down ->
-      model - 1
+      { model | counter = model.counter - 1 }
     Click Select ->
-      0
+      { model | counter = 0 }
     NoOp ->
       model
 
 
 view : Model -> Card
 view model =
-  { title = "Counter"
-  , body = toString model
+  { title = "Pebbelm"
+  , body = "Counter: " ++ (toString model.counter)
   }
 
 
