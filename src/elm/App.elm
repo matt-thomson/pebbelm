@@ -1,4 +1,5 @@
-module App where
+module App (..) where
+
 
 type alias Card =
   { title : String
@@ -7,7 +8,7 @@ type alias Card =
 
 
 type alias Model =
-  { counter: Int
+  { counter : Int
   }
 
 
@@ -17,14 +18,14 @@ init =
   }
 
 
-type Button =
-  Up
+type Button
+  = Up
   | Down
   | Select
 
 
-type Action =
-  NoOp
+type Action
+  = NoOp
   | Click Button
 
 
@@ -33,10 +34,13 @@ update action model =
   case action of
     Click Up ->
       { model | counter = model.counter + 1 }
+
     Click Down ->
       { model | counter = model.counter - 1 }
+
     Click Select ->
       { model | counter = 0 }
+
     NoOp ->
       model
 
@@ -49,17 +53,18 @@ view model =
 
 
 port clicks : Signal (Maybe String)
-
-
 parseButton : String -> Maybe Button
 parseButton click =
   case click of
     "up" ->
       Just Up
+
     "down" ->
       Just Down
+
     "select" ->
       Just Select
+
     _ ->
       Nothing
 
@@ -67,9 +72,9 @@ parseButton click =
 actions : Signal Action
 actions =
   clicks
-  |> Signal.map (\x -> Maybe.andThen x parseButton)
-  |> Signal.map (Maybe.map Click)
-  |> Signal.filterMap identity NoOp
+    |> Signal.map (\x -> Maybe.andThen x parseButton)
+    |> Signal.map (Maybe.map Click)
+    |> Signal.filterMap identity NoOp
 
 
 model : Signal Model
