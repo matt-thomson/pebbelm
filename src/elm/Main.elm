@@ -1,4 +1,8 @@
-module App (..) where
+module Main (..) where
+
+import Effects exposing (Effects)
+import Pebble.App exposing (start, App)
+import Signal exposing (Address)
 
 
 type alias Card =
@@ -12,10 +16,13 @@ type alias Model =
   }
 
 
-init : Model
+init : ( Model, Effects Action )
 init =
-  { counter = 0
-  }
+  let
+    model =
+      { counter = 0 }
+  in
+    ( model, Effects.none )
 
 
 type Button
@@ -29,24 +36,24 @@ type Action
   | Click Button
 
 
-update : Action -> Model -> Model
+update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     Click Up ->
-      { model | counter = model.counter + 1 }
+      ( { model | counter = model.counter + 1 }, Effects.none )
 
     Click Down ->
-      { model | counter = model.counter - 1 }
+      ( { model | counter = model.counter - 1 }, Effects.none )
 
     Click Select ->
-      { model | counter = 0 }
+      ( { model | counter = 0 }, Effects.none )
 
     NoOp ->
-      model
+      ( model, Effects.none )
 
 
-view : Model -> Card
-view model =
+view : Address Action -> Model -> Card
+view address model =
   { title = "Pebbelm"
   , body = "Counter: " ++ (toString model.counter)
   }
@@ -77,11 +84,11 @@ actions =
     |> Signal.filterMap identity NoOp
 
 
-model : Signal Model
-model =
-  Signal.foldp update init actions
+app : App Model
+app =
+  start { init = init, view = view, update = update, inputs = [] }
 
 
 port card : Signal Card
 port card =
-  Signal.map view model
+  app.card

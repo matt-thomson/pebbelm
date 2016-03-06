@@ -1,10 +1,10 @@
 var UI = require('ui');
-var Elm = require('./elm/App.elm');
+var Elm = require('./elm/Main.elm');
 
 var card = new UI.Card({});
 card.show();
 
-var app = Elm.worker(Elm.App, { clicks: '' });
+var app = Elm.worker(Elm.Main, { clicks: '' });
 
 app.ports.card.subscribe(function(message) {
   card.title(message['title'])
