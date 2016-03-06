@@ -1,43 +1,35 @@
 module Main (..) where
 
+import Components.Counter as Counter
 import Effects exposing (Effects)
 import Pebble.App exposing (start, App, Card)
-import Pebble.Button exposing (Button)
 import Pebble.Event exposing (Event)
 import Signal exposing (Address)
 
 
 type alias Model =
-  { counter : Int
+  { counter : Counter.Model
   }
-
-
-init : ( Model, Effects Action )
-init =
-  let
-    model =
-      { counter = 0 }
-  in
-    ( model, Effects.none )
 
 
 type Action
   = PebbleEvent Event
 
 
+init : ( Model, Effects Action )
+init =
+  ( { counter = Counter.init }, Effects.none )
+
+
 update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
     PebbleEvent (Pebble.Event.Click button) ->
-      case button of
-        Pebble.Button.Up ->
-          ( { model | counter = model.counter + 1 }, Effects.none )
-
-        Pebble.Button.Down ->
-          ( { model | counter = model.counter - 1 }, Effects.none )
-
-        Pebble.Button.Select ->
-          ( { model | counter = 0 }, Effects.none )
+      let
+        counter =
+          Counter.update (Counter.Click button) model.counter
+      in
+        ( { model | counter = counter }, Effects.none )
 
     PebbleEvent (Pebble.Event.NoOp) ->
       ( model, Effects.none )
@@ -46,7 +38,7 @@ update action model =
 view : Address Action -> Model -> Card
 view address model =
   { title = "Pebbelm"
-  , body = "Counter: " ++ (toString model.counter)
+  , body = Counter.view model.counter
   }
 
 
