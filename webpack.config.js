@@ -21,5 +21,12 @@ module.exports = {
     ],
     noParse: /\.elm$/
   },
-  externals: ["ui"]
+  externals: ["ui"],
+  plugins: [
+    new webpack.optimize.UglifyJsPlugin({
+      minimize:   true,
+      compressor: { warnings: false },
+      mangle:     true
+    })
+  ]
 }
