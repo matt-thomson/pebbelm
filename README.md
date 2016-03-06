@@ -2,6 +2,8 @@
 
 Proof-of-concept [Elm](http://elm-lang.org/) app for [Pebble](https://www.pebble.com/) smartwatches.  Displays the current weather in London, together with a counter that can be controlled via the up/down/select buttons.
 
+[![wercker status](https://app.wercker.com/status/92264874d0204e273a47e4980e346cd8/s/master "wercker status")](https://app.wercker.com/project/bykey/92264874d0204e273a47e4980e346cd8)
+
 ![Screenshot](pebbelm.png?raw=true)
 
 ## Building the app
