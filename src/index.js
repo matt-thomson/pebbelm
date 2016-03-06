@@ -4,7 +4,7 @@ var Elm = require('./elm/Main.elm');
 var card = new UI.Card({});
 card.show();
 
-var app = Elm.worker(Elm.Main, { clicks: '' });
+var app = Elm.worker(Elm.Main, { events: '' });
 
 app.ports.card.subscribe(function(message) {
   card.title(message['title'])
@@ -12,13 +12,13 @@ app.ports.card.subscribe(function(message) {
 });
 
 card.on('click', 'up', function() {
-  app.ports.clicks.send('up');
+  app.ports.events.send('click.up');
 });
 
 card.on('click', 'down', function() {
-  app.ports.clicks.send('down');
+  app.ports.events.send('click.down');
 });
 
 card.on('click', 'select', function() {
-  app.ports.clicks.send('select');
+  app.ports.events.send('click.select');
 });

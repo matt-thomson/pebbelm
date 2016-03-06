@@ -1,14 +1,10 @@
 module Main (..) where
 
 import Effects exposing (Effects)
-import Pebble.App exposing (start, App)
+import Pebble.App exposing (start, App, Card)
+import Pebble.Button exposing (Button)
+import Pebble.Event exposing (Event)
 import Signal exposing (Address)
-
-
-type alias Card =
-  { title : String
-  , body : String
-  }
 
 
 type alias Model =
@@ -25,30 +21,25 @@ init =
     ( model, Effects.none )
 
 
-type Button
-  = Up
-  | Down
-  | Select
-
-
 type Action
-  = NoOp
-  | Click Button
+  = PebbleEvent Event
 
 
 update : Action -> Model -> ( Model, Effects Action )
 update action model =
   case action of
-    Click Up ->
-      ( { model | counter = model.counter + 1 }, Effects.none )
+    PebbleEvent (Pebble.Event.Click button) ->
+      case button of
+        Pebble.Button.Up ->
+          ( { model | counter = model.counter + 1 }, Effects.none )
 
-    Click Down ->
-      ( { model | counter = model.counter - 1 }, Effects.none )
+        Pebble.Button.Down ->
+          ( { model | counter = model.counter - 1 }, Effects.none )
 
-    Click Select ->
-      ( { model | counter = 0 }, Effects.none )
+        Pebble.Button.Select ->
+          ( { model | counter = 0 }, Effects.none )
 
-    NoOp ->
+    PebbleEvent (Pebble.Event.NoOp) ->
       ( model, Effects.none )
 
 
@@ -59,36 +50,21 @@ view address model =
   }
 
 
-port clicks : Signal (Maybe String)
-parseButton : String -> Maybe Button
-parseButton click =
-  case click of
-    "up" ->
-      Just Up
-
-    "down" ->
-      Just Down
-
-    "select" ->
-      Just Select
-
-    _ ->
-      Nothing
-
-
-actions : Signal Action
-actions =
-  clicks
-    |> Signal.map (\x -> Maybe.andThen x parseButton)
-    |> Signal.map (Maybe.map Click)
-    |> Signal.filterMap identity NoOp
-
-
 app : App Model
 app =
-  start { init = init, view = view, update = update, inputs = [] }
+  start
+    { init = init
+    , view = view
+    , update = update
+    , inputs = []
+    , events = events
+    , handler = PebbleEvent
+    }
 
 
 port card : Signal Card
 port card =
   app.card
+
+
+port events : Signal String

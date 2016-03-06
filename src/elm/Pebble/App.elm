@@ -1,6 +1,7 @@
-module Pebble.App (start, Config, App) where
+module Pebble.App (start, Card, Config, App) where
 
 import Effects exposing (Effects, Never)
+import Pebble.Event as Event
 import Task
 
 
@@ -15,6 +16,8 @@ type alias Config model action =
   , update : action -> model -> ( model, Effects action )
   , view : Signal.Address action -> model -> Card
   , inputs : List (Signal.Signal action)
+  , events : Signal String
+  , handler : Event.Event -> action
   }
 
 
@@ -47,8 +50,15 @@ start config =
     update actions ( model, _ ) =
       List.foldl updateStep ( model, Effects.none ) actions
 
+    watchActions =
+      Signal.map config.handler (Event.events config.events)
+
     inputs =
-      Signal.mergeMany (messages.signal :: List.map (Signal.map singleton) config.inputs)
+      Signal.mergeMany
+        (messages.signal
+          :: Signal.map singleton watchActions
+          :: List.map (Signal.map singleton) config.inputs
+        )
 
     effectsAndModel =
       Signal.foldp update config.init inputs
