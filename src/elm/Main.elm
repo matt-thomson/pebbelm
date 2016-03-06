@@ -1,24 +1,38 @@
 module Main (..) where
 
 import Components.Counter as Counter
-import Effects exposing (Effects)
+import Components.Forecast as Forecast
+import Effects exposing (Effects, Never)
 import Pebble.App exposing (start, App, Card)
 import Pebble.Event exposing (Event)
 import Signal exposing (Address)
+import Task exposing (Task)
 
 
 type alias Model =
   { counter : Counter.Model
+  , forecast : Forecast.Model
   }
 
 
 type Action
   = PebbleEvent Event
+  | ForecastAction Forecast.Action
 
 
 init : ( Model, Effects Action )
 init =
-  ( { counter = Counter.init }, Effects.none )
+  let
+    counter =
+      Counter.init
+
+    ( forecast, forecastFx ) =
+      Forecast.init
+
+    fx =
+      Effects.map ForecastAction forecastFx
+  in
+    ( { counter = counter, forecast = forecast }, fx )
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -34,12 +48,23 @@ update action model =
     PebbleEvent (Pebble.Event.NoOp) ->
       ( model, Effects.none )
 
+    ForecastAction action ->
+      let
+        forecast =
+          Forecast.update action model.forecast
+      in
+        ( { model | forecast = forecast }, Effects.none )
+
 
 view : Address Action -> Model -> Card
 view address model =
-  { title = "Pebbelm"
-  , body = Counter.view model.counter
-  }
+  let
+    body =
+      Counter.view model.counter ++ "\n" ++ Forecast.view model.forecast
+  in
+    { title = "Pebbelm"
+    , body = body
+    }
 
 
 app : App Model
@@ -57,6 +82,11 @@ app =
 port card : Signal Card
 port card =
   app.card
+
+
+port tasks : Signal (Task Never ())
+port tasks =
+  app.tasks
 
 
 port events : Signal String

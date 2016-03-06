@@ -1,0 +1,6 @@
+module Config (forecastIoKey) where
+
+
+forecastIoKey : String
+forecastIoKey =
+  "api-key"

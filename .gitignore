@@ -39,3 +39,4 @@ elm-stuff/
 repl-temp-*
 
 dist
+Config.elm
