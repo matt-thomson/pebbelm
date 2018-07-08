@@ -4,13 +4,17 @@
   "description": "Proof-of-concept Elm app for Pebble smartwatches",
   "main": "src/js/index.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "Matt Thomson",
   "license": "MIT",
   "dependencies": {
     "elm": "^0.16.0",
-    "elm-webpack-loader": "^2.0.0",
-    "webpack": "^1.12.14"
-  }
+    "elm-webpack-loader": "^3.0.4",
+    "webpack": "^1.12.14",
+    "snyk": "^1.88.2"
+  },
+  "snyk": true
 }
